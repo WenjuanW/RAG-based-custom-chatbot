@@ -1,35 +1,19 @@
-#!/bin/bash
+#!/bin/zsh
 
-# Define the environment name and requirements file
-ENV_NAME="myenv"
-REQUIREMENTS_FILE="requirements.txt"
-
-# Check if Conda is installed
-if ! command -v conda &> /dev/null
-then
-    echo "Conda could not be found. Please install Conda first."
+# Check if conda is available
+if ! command -v conda &> /dev/null; then
+    echo "conda could not be found. Please install Anaconda or Miniconda first."
     exit 1
 fi
 
-# Create the Conda environment
-echo "Creating Conda environment: $ENV_NAME"
-conda create --name "$ENV_NAME" -y
+# Create the conda environment from the environment.yml file
+echo "Creating conda environment from environment.yml..."
+conda env create -f environment.yml
 
-# Activate the environment
-echo "Activating Conda environment: $ENV_NAME"
-source activate "$ENV_NAME"
-
-# Install pip if not already installed
-echo "Installing pip in the Conda environment"
-conda install pip -y
-
-# Install the required packages
-if [ -f "$REQUIREMENTS_FILE" ]; then
-    echo "Installing packages from $REQUIREMENTS_FILE"
-    pip install -r "$REQUIREMENTS_FILE"
+# Check if the environment was created successfully
+if [ $? -eq 0 ]; then
+    echo "Conda environment created successfully."
 else
-    echo "Requirements file $REQUIREMENTS_FILE not found"
+    echo "Failed to create conda environment."
     exit 1
 fi
-
-echo "Environment setup complete."
